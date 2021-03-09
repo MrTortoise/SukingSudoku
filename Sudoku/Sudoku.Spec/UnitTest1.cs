@@ -1,4 +1,8 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Security.Cryptography.X509Certificates;
 using Xunit;
 
 namespace Sudoku.Spec
@@ -62,9 +66,72 @@ namespace Sudoku.Spec
 
     public class Solver
     {
+        // we know we have one blank space
         public int[,] Solve(int[,] toSolve)
         {
-            return (int[,])toSolve.Clone();
+            var blankSpace = FindBlanks(toSolve).First();
+            var validCandidates = FindValidCandidatesForSingleBlankSpace(toSolve, blankSpace).First();
+            var result = (int[,])toSolve.Clone();
+            result[blankSpace.Y, blankSpace.X] = validCandidates;
+            return result;
+        }
+
+        private List<int> FindValidCandidatesForSingleBlankSpace(int[,] toSolve, Cell blankSpace)
+        {
+            var x = blankSpace.X;
+            var valuesInColumn = GetNumbersInSudokuByColumn(toSolve, x);
+            var missingNumbers = GetMissingNumbers(valuesInColumn.ToList());
+            return missingNumbers;
+        }
+
+        private List<int> GetMissingNumbers(List<int> valuesInColumn)
+        {
+            var all = Enumerable.Range(1, 9);
+            var missing = all.Where(i => !valuesInColumn.Contains(i));
+            return missing.ToList();
+        }
+
+        private IEnumerable<int> GetNumbersInSudokuByColumn(int[,] toSolve, int x)
+        {
+            for (int i = 0; i < 9; i++)
+            {
+                var val = toSolve[i, x];
+                if (val == 0)
+                {
+                    continue;
+                }
+
+                yield return val;
+            }
+        }
+
+        private List<Cell> FindBlanks(int[,] toSolve)
+        {
+            var result = new List<Cell>();
+            for (int y = 0; y < 9; y++)
+            {
+                for (int x = 0; x < 9; x++)
+                {
+                    if (toSolve[y, x] == 0)
+                    {
+                        result.Add(new Cell(x, y));
+                    }
+                }
+            }
+
+            return result;
+        }
+    }
+
+    public class Cell
+    {
+        public int X { get; }
+        public int Y { get; }
+
+        public Cell(int x, int y)
+        {
+            X = x;
+            Y = y;
         }
     }
 }
