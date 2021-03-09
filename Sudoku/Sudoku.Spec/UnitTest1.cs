@@ -69,7 +69,12 @@ namespace Sudoku.Spec
         // we know we have one blank space
         public int[,] Solve(int[,] toSolve)
         {
-            var blankSpace = FindBlanks(toSolve).First();
+            var findBlanks = FindBlanks(toSolve);
+            if (!findBlanks.Any())
+            {
+                return toSolve;
+            }
+            var blankSpace = findBlanks.First();
             var validCandidates = FindValidCandidatesForSingleBlankSpace(toSolve, blankSpace).First();
             var result = (int[,])toSolve.Clone();
             result[blankSpace.Y, blankSpace.X] = validCandidates;
