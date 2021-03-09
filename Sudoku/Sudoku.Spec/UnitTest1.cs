@@ -62,6 +62,20 @@ namespace Sudoku.Spec
             var ut = new Solver();
             Assert.Equal(_completed1, ut.Solve(sudoku));
         }
+
+        [Fact]
+        public void SolveAllMissing1Space()
+        {
+            for (int i = 0; i < 9; i++)
+            {
+                for (int j = 0; j < 9; j++)
+                {
+                    var sudoku = KnockOutValue(_completed1, i, j);
+                    var ut = new Solver();
+                    Assert.Equal(_completed1, ut.Solve(sudoku));
+                }
+            }
+        }
     }
 
     public class Solver
