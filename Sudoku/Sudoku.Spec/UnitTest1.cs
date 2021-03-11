@@ -99,6 +99,44 @@ namespace Sudoku.Spec
             var solver = new Solver();
             Assert.Equal(_completed1, solver.Solve(sudokuCopy));
         }
+
+        [Fact]
+        public void SolveFor2MissingInAllPositionsInARow()
+        {
+            for (int lower = 0; lower < 8; lower++)
+            {
+                for (int upper = 1; upper < 9; upper++)
+                {
+                    if (lower==upper) continue;
+
+                    var sudokuCopy = (int[,])_completed1.Clone();
+                    sudokuCopy[8, lower] = 0;
+                    sudokuCopy[8, upper] = 0;
+
+                    var solver = new Solver();
+                    Assert.Equal(_completed1, solver.Solve(sudokuCopy));
+                }
+            }
+        }
+
+        [Fact]
+        public void SolveFor2MissingInAllPositionsInAColumn()
+        {
+            for (int lower = 0; lower < 8; lower++)
+            {
+                for (int upper = 1; upper < 9; upper++)
+                {
+                    if (lower == upper) continue;
+
+                    var sudokuCopy = (int[,])_completed1.Clone();
+                    sudokuCopy[ lower, 8] = 0;
+                    sudokuCopy[upper, 8] = 0;
+
+                    var solver = new Solver();
+                    Assert.Equal(_completed1, solver.Solve(sudokuCopy));
+                }
+            }
+        }
     }
 
     public class Solver
