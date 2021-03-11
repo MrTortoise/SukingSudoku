@@ -76,6 +76,17 @@ namespace Sudoku.Spec
                 }
             }
         }
+
+        [Fact]
+        public void Solve2MissingInRow()
+        {
+            var sudokuCopy = (int[,])_completed1.Clone();
+            sudokuCopy[0, 8] = 0;
+            sudokuCopy[8, 8] = 0;
+
+            var solver = new Solver();
+            Assert.Equal(_completed1, solver.Solve(sudokuCopy) );
+        }
     }
 
     public class Solver
