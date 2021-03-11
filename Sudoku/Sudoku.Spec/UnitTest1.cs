@@ -88,6 +88,17 @@ namespace Sudoku.Spec
             var solver = new Solver();
             Assert.Equal(_completed1, solver.Solve(sudokuCopy) );
         }
+
+        [Fact]
+        public void Solve2MissingInColumn()
+        {
+            var sudokuCopy = (int[,])_completed1.Clone();
+            sudokuCopy[8, 0] = 0;
+            sudokuCopy[8, 8] = 0;
+
+            var solver = new Solver();
+            Assert.Equal(_completed1, solver.Solve(sudokuCopy));
+        }
     }
 
     public class Solver
