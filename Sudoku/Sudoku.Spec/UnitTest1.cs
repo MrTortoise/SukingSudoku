@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
@@ -94,16 +95,31 @@ namespace Sudoku.Spec
         // we know we have one blank space
         public int[,] Solve(int[,] toSolve)
         {
-            var findBlanks = FindBlanks(toSolve);
-            if (!findBlanks.Any())
+            var blanks = FindBlanks(toSolve);
+            return Solve(toSolve, blanks).Result;
+
+        }
+
+        public SolveResult Solve(int[,] toSolve, List<Cell> blanks)
+        {
+            if (!blanks.Any()) return new SolveResult(SudokuState.Solved, toSolve);
+
+            var blank = blanks.First();
+            var validCandidates = FindValidCandidatesForSingleBlankSpace(toSolve, blank);
+
+            if (!validCandidates.Any()) return new SolveResult(SudokuState.Invalid, null);
+            foreach (var validCandidate in validCandidates)
             {
-                return toSolve;
+                var wip = (int[,])toSolve.Clone();
+                wip[blank.Y, blank.X] = validCandidate;
+
+                var nextBlanks = FindBlanks(wip);
+                var result = Solve(wip, nextBlanks);
+                if (result.Solved == SudokuState.Solved) return result;
             }
-            var blankSpace = findBlanks.First();
-            var validCandidates = FindValidCandidatesForSingleBlankSpace(toSolve, blankSpace).First();
-            var result = (int[,])toSolve.Clone();
-            result[blankSpace.Y, blankSpace.X] = validCandidates;
-            return result;
+
+            return new SolveResult(SudokuState.Invalid, null);
+
         }
 
         private List<int> FindValidCandidatesForSingleBlankSpace(int[,] toSolve, Cell blankSpace)
@@ -150,6 +166,24 @@ namespace Sudoku.Spec
             }
 
             return result;
+        }
+    }
+
+    public enum SudokuState
+    {
+        Solved,
+        Invalid
+    }
+
+    public class SolveResult
+    {
+        public SudokuState Solved { get; }
+        public int[,] Result { get; }
+
+        public SolveResult(SudokuState solved, int[,] result)
+        {
+            Solved = solved;
+            Result = result;
         }
     }
 
