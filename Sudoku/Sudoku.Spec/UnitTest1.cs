@@ -175,7 +175,8 @@ namespace Sudoku.Spec
         {
             var x = blankSpace.X;
             var valuesInColumn = GetNumbersInSudokuByColumn(toSolve, x);
-            var missingNumbers = GetMissingNumbers(valuesInColumn.ToList());
+            var valuesInRow = GetNumbersInSudokuByRow(toSolve, blankSpace.Y);
+            var missingNumbers = GetMissingNumbers(valuesInColumn.Union(valuesInRow).Distinct().ToList());
             return missingNumbers;
         }
 
@@ -184,6 +185,20 @@ namespace Sudoku.Spec
             var all = Enumerable.Range(1, 9);
             var missing = all.Where(i => !valuesInColumn.Contains(i));
             return missing.ToList();
+        }
+
+        private IEnumerable<int> GetNumbersInSudokuByRow(int[,] toSolve, int y)
+        {
+            for (int i = 0; i < 9; i++)
+            {
+                var val = toSolve[y, i];
+                if (val == 0)
+                {
+                    continue;
+                }
+
+                yield return val;
+            }
         }
 
         private IEnumerable<int> GetNumbersInSudokuByColumn(int[,] toSolve, int x)
