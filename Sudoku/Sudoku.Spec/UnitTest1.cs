@@ -27,7 +27,7 @@ namespace Sudoku.Spec
         public void JustReturnACompletedSudoku()
         {
             var ut = new Solver();
-            Assert.Equal( _completed1, ut.Solve(_completed1));
+            Assert.Equal(_completed1, ut.Solve(_completed1));
         }
 
         [Fact]
@@ -46,7 +46,7 @@ namespace Sudoku.Spec
                 {3, 4, 5, 2, 8, 6, 1, 7, 0}
             };
 
-            Assert.Equal(completedWithout1, KnockOutValue(_completed1,8,8));
+            Assert.Equal(completedWithout1, KnockOutValue(_completed1, 8, 8));
         }
 
         private int[,] KnockOutValue(int[,] completed, int x, int y)
@@ -86,7 +86,7 @@ namespace Sudoku.Spec
             sudokuCopy[8, 8] = 0;
 
             var solver = new Solver();
-            Assert.Equal(_completed1, solver.Solve(sudokuCopy) );
+            Assert.Equal(_completed1, solver.Solve(sudokuCopy));
         }
 
         [Fact]
@@ -107,7 +107,7 @@ namespace Sudoku.Spec
             {
                 for (int upper = 1; upper < 9; upper++)
                 {
-                    if (lower==upper) continue;
+                    if (lower == upper) continue;
 
                     var sudokuCopy = (int[,])_completed1.Clone();
                     sudokuCopy[8, lower] = 0;
@@ -129,7 +129,7 @@ namespace Sudoku.Spec
                     if (lower == upper) continue;
 
                     var sudokuCopy = (int[,])_completed1.Clone();
-                    sudokuCopy[ lower, 8] = 0;
+                    sudokuCopy[lower, 8] = 0;
                     sudokuCopy[upper, 8] = 0;
 
                     var solver = new Solver();
@@ -137,7 +137,32 @@ namespace Sudoku.Spec
                 }
             }
         }
+
+        [Fact]
+        public void PunchHolesSoThatTheSquareSolverIsRequired()
+        {
+
+            int[,] toTest = new int[9, 9]
+            {
+            {0, 3, 0, 6, 7, 8, 9, 1, 0},
+            {6, 7, 2, 0, 9, 5, 3, 4, 0},
+            {0, 9, 0, 3, 4, 0, 5, 6, 0},
+            {8, 5, 9, 7, 6, 1, 4, 2, 3},
+            {4, 2, 6, 8, 5, 3, 7, 9, 1},
+            {7, 1, 3, 9, 2, 0, 8, 5, 6},
+            {9, 6, 0, 5, 3, 7, 2, 8, 4},
+            {2, 8, 7, 4, 1, 9, 6, 3, 5},
+            {3, 4, 5, 2, 8, 6, 1, 7, 9}
+            };
+
+            var solver = new Solver();
+            Assert.Equal(_completed1, solver.Solve(toTest));
+
+
+        }
     }
+
+
 
     public class Solver
     {
